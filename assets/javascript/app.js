@@ -13,6 +13,8 @@ firebase.initializeApp(config);
 
 var database = firebase.database();
 
+// var count = 0;
+
 // 2. Button for adding Trains
 $("#add-train-btn").on("click", function(event) {
   event.preventDefault();
@@ -55,6 +57,23 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
 
   console.log(childSnapshot.val());
 
+  updateTable(childSnapshot);
+
+});
+
+// 3. Create Firebase event for adding train to the database and a row in the html when a user adds an entry
+// database.ref().on("child_changed", function(childSnapshot, prevChildKey) {
+
+//   console.log(childSnapshot.val());
+
+//   updateTable(childSnapshot);
+
+// });
+
+function updateTable (childSnapshot) {
+
+  console.log(childSnapshot);
+
   // Store everything into a variable.
   var trainName = childSnapshot.val().name;
   var destination = childSnapshot.val().destination;
@@ -84,11 +103,27 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   console.log("MINUTES TILL TRAIN: " + minAway);
 
   var nextArrival = moment().add(minAway, "minutes");
-  console.log("ARRIVAL TIME: " + moment(nextArrival).format("HH:mm"));
+  console.log("ARRIVAL TIME: " + moment(nextArrival).format("hh:mm a"));
 
   // Add each train's data into the table
   $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
-  tFrequency + "</td><td>" + moment(nextArrival).format("HH:mm") + "</td><td>" + minAway + "</td></tr>");
+  tFrequency + "</td><td>" + moment(nextArrival).format("hh:mm a") + "</td><td>" + minAway + "</td></tr>");
+}
+
+// update clock
+var datetime, date;
+
+function updateTime () {
+  date = moment(new Date())
+  $('#datetime').html(date.format('dddd, MMMM Do YYYY, hh:mm:ss a'));
+};
+
+// var updateCount = function() {
+
+// }
+
+$(document).ready(function(){
+    updateTime();
+    setInterval(updateTime, 1000);
+    // setInterval(updateCount, 60000);
 });
-
-
